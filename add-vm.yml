@@ -1,0 +1,10 @@
+- hosts: all
+  vars_prompt:
+    - name: password
+      prompt: what is your password?
+    - name: vm_name
+      prompt: What is the name of the new VM?
+      private: no
+  gather_facts: no
+  roles:
+    - create-new-vm-add-kube

@@ -1,0 +1,8 @@
+    kvmhost:
+      hosts:
+        localhost:
+          ansible_connection: local
+          ansible_python_interpreter: /usr/bin/python3
+    kcontrollers:
+      hosts:
+        kcontroller.mykube.home:

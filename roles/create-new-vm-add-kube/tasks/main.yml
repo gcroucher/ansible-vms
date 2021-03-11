@@ -1,0 +1,21 @@
+- name: Create disk for VM
+  local_action: command qemu-img create -f qcow2 -b "/var/lib/libvirt/images/kworker-image.qcow2" "/var/lib/libvirt/images/{{ vm_name }}.qcow2"
+  become: True
+  run_once: True 
+
+- name: Create new VM
+  local_action: command virt-install --import --name {{ vm_name }} --memory 2048 --vcpus 2 --cpu host --disk /var/lib/libvirt/images/{{ vm_name }}.qcow2 --os-variant=fedora33 --noautoconsole 
+  become: True
+  run_once: True
+
+- name: rename new VM
+  local_action: command ssh {{ vm_name }} sudo -S -- hostnamectl set-hostname {{ vm_name }}.mykube.home
+  run_once: True
+  args: 
+    stdin: "{{ password }}"
+
+- name: Join Kube cluster
+  local_action: command ssh {{ vm_name }} sudo -S -- kubeadm join 192.168.122.99:6443 --token  pwv3rd.ack8gw7y4q74x99e    --discovery-token-ca-cert-hash sha256:4071b59aee3041e0612d08988987f18d33002c41f3da460cad4ad2c2b3e671f3  --v=2
+  run_once: True
+  args: 
+    stdin: "{{ password }}"
